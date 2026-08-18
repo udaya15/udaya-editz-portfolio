@@ -1,0 +1,352 @@
+<?php
+/**
+ * UDAYA EDITZ — Portfolio
+ * index.php — main layout. Project data lives in data/projects.php as a
+ * plain PHP array (the "JSON data processing" layer): this file renders
+ * the initial cards server-side, then also prints the same array as JSON
+ * into the page for script.js to use for instant client-side filtering.
+ */
+require_once __DIR__ . '/data/projects.php';
+$projects = getProjects(); // array of associative arrays
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Udaya Editz — Video Editor &amp; Mobile Videographer | Kalutara, Sri Lanka</title>
+<meta name="description" content="Udayanga Vishvajith Perera (Udaya Editz) — high-retention video editing, long-form &amp; short-form, mobile videography. DaVinci Resolve &amp; CapCut Pro. Kalutara, Sri Lanka.">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Icons -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous" defer></script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ PRELOADER ============ -->
+<div id="preloader" aria-hidden="true">
+  <div class="loader-mark" id="loaderMark"></div>
+  <div class="loader-bar"></div>
+  <div class="loader-code" id="loaderCode">LOADING TIMELINE — 00:00:00:00</div>
+</div>
+
+<!-- ============ TIMELINE SCRUBBER (signature nav element) ============ -->
+<nav id="timeline" aria-label="Page scroll timeline">
+  <span class="tl-code" id="tlCode">00:00 / 00:00</span>
+  <div class="tl-track" id="tlTrack">
+    <div class="tl-fill" id="tlFill"></div>
+    <div class="tl-playhead" id="tlPlayhead"></div>
+  </div>
+  <span class="tl-label" id="tlLabel">HOME</span>
+</nav>
+
+<!-- ============ HEADER ============ -->
+<header id="siteHeader">
+  <div class="container nav-wrap">
+    <a href="#home" class="logo"><span class="dot"></span> UDAYA EDITZ</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home" class="nav-link">Home</a></li>
+      <li><a href="#portfolio" class="nav-link">Portfolio</a></li>
+      <li><a href="#services" class="nav-link">Services</a></li>
+      <li><a href="#why" class="nav-link">Why Choose Me</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#contact" class="btn"><span class="btn-hire-text">Hire Me</span><i class="fa-solid fa-arrow-right" style="font-size:.75rem"></i></a>
+      <button class="burger" id="burgerBtn" aria-label="Toggle menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="home">
+  <!-- Animated ambient background: drifting glow orbs behind the grid -->
+  <div class="hero-anim-bg" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+  <div class="hero-grid"></div>
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <div class="hero-eyebrow"><span class="rec">REC</span> · Kalutara, Sri Lanka · Sinhala &amp; English</div>
+      <h1>
+        <span class="line"><span>Crafting High-Retention</span></span>
+        <span class="line"><span>Visual Stories &amp;</span></span>
+        <span class="line"><span class="accent">Cinematic Edits.</span></span>
+      </h1>
+      <p class="lede">I'm Udayanga Vishvajith Perera — video editor &amp; mobile videographer specializing in long-form storytelling, scroll-stopping short-form cuts, and shoot-to-edit mobile videography.</p>
+      <div class="hero-actions">
+        <a href="assets/docs/Udayanga_Vishvajith_Perera_CV.pdf" download class="btn"><i class="fa-solid fa-download"></i> Download CV</a>
+        <a href="#portfolio" class="btn btn-ghost">View Work</a>
+      </div>
+      <div class="badges">
+        <span class="badge">DaVinci Resolve Expert</span>
+        <span class="badge">CapCut Pro</span>
+        <span class="badge">Mobile Videographer</span>
+      </div>
+    </div>
+
+    <!-- Tool showcase panel — fills the empty right rail on wide screens with
+         floating, glowing DaVinci Resolve / CapCut chips instead of the old
+         static preview-monitor panel -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="tool-orbit">
+        <span class="tool-orbit-ring"></span>
+        <div class="tool-chip tc-davinci">
+          <span class="tool-icon"><i class="fa-solid fa-clapperboard"></i></span>
+          <span class="tool-label">DaVinci Resolve</span>
+        </div>
+        <div class="tool-chip tc-capcut">
+          <span class="tool-icon"><i class="fa-solid fa-film"></i></span>
+          <span class="tool-label">CapCut</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PORTFOLIO ============ -->
+<section id="portfolio">
+  <div class="container">
+    <div class="eyebrow">00:02:00:00 — Selected Work</div>
+    <div class="section-head">
+      <h2>A reel built for <span class="accent">retention</span>, not just replay.</h2>
+      <p>Long-form documentaries, short-form hooks, and raw mobile footage turned into cut-together stories.</p>
+    </div>
+
+    <div class="filters" id="filters" role="tablist" aria-label="Filter portfolio">
+      <button class="filter-btn active" data-filter="all">All Projects</button>
+      <button class="filter-btn" data-filter="short">Short Form</button>
+      <button class="filter-btn" data-filter="long">Long Form</button>
+      <button class="filter-btn" data-filter="mobile">Mobile Videography</button>
+    </div>
+
+    <div class="grid-portfolio" id="portfolioGrid">
+      <?php foreach ($projects as $i => $p):
+        $vertClass = $p['orientation'] === 'vertical' ? ' vertical' : '';
+      ?>
+      <article class="card show<?php echo $vertClass; ?>"
+        data-category="<?php echo htmlspecialchars($p['category']); ?>"
+        data-index="<?php echo $i; ?>"
+        tabindex="0" role="button"
+        aria-label="Play <?php echo htmlspecialchars($p['title']); ?>">
+        <div class="card-media">
+          <video class="card-vid" muted loop playsinline preload="metadata" data-src="<?php echo htmlspecialchars($p['video']); ?>#t=0.5"></video>
+          <div class="play-overlay"><span class="pc"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+          <div class="card-meta">
+            <span class="tc"><?php echo htmlspecialchars($p['timecode']); ?></span>
+            <h3><?php echo htmlspecialchars($p['title']); ?></h3>
+            <span class="sw"><?php echo htmlspecialchars($p['software']); ?></span>
+          </div>
+        </div>
+      </article>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section id="services">
+  <div class="container">
+    <div class="eyebrow">00:03:00:00 — What I Do</div>
+    <div class="section-head">
+      <h2>Services &amp; <span class="accent">skills</span>.</h2>
+      <p>Every edit runs through the same pipeline: pacing, grade, sound, and captions — tuned per platform.</p>
+    </div>
+    <div class="grid-services">
+      <div class="svc-card">
+        <div class="ic"><i class="fa-solid fa-chart-line"></i></div>
+        <h3>High-Retention Storytelling &amp; Pacing</h3>
+        <p>Structure and rhythm built to hold attention from the first frame to the last second.</p>
+      </div>
+      <div class="svc-card">
+        <div class="ic"><i class="fa-solid fa-shapes"></i></div>
+        <h3>Advanced Motion Graphics</h3>
+        <p>Kinetic titles, transitions, and overlays that support the story instead of distracting from it.</p>
+      </div>
+      <div class="svc-card">
+        <div class="ic"><i class="fa-solid fa-sliders"></i></div>
+        <h3>Cinematic Color Grading</h3>
+        <p>Mood-driven grades built in DaVinci Resolve, matched consistently across every shot.</p>
+      </div>
+      <div class="svc-card">
+        <div class="ic"><i class="fa-solid fa-waveform-lines"></i></div>
+        <h3>Sound Design &amp; Audio Mixing</h3>
+        <p>Clean dialogue, balanced music beds, and sound design that carries the emotion of a scene.</p>
+      </div>
+      <div class="svc-card">
+        <div class="ic"><i class="fa-solid fa-closed-captioning"></i></div>
+        <h3>Animated Dynamic Subtitles</h3>
+        <p>Punchy, on-beat captioning in Sinhala or English, styled to match your brand.</p>
+      </div>
+      <div class="svc-card">
+        <div class="ic"><i class="fa-solid fa-mobile-screen-button"></i></div>
+        <h3>Mobile Videography &amp; Shoot-to-Edit</h3>
+        <p>Filming and editing handled end-to-end from a single phone-first workflow.</p>
+      </div>
+    </div>
+    <div class="stack-row">
+      <span class="badge">DaVinci Resolve</span>
+      <span class="badge">CapCut Pro</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY CHOOSE ME ============ -->
+<section id="why">
+  <div class="container">
+    <div class="eyebrow">00:04:00:00 — Client Benefits</div>
+    <div class="section-head">
+      <h2>Why work with <span class="accent">Udaya Editz</span>.</h2>
+    </div>
+    <div class="grid-why">
+      <div class="why-card">
+        <span class="ic"><i class="fa-solid fa-bolt"></i></span>
+        <div><h3>Fast Turnaround</h3><p>Deadlines are commitments, not estimates — delivered on time, every time.</p></div>
+      </div>
+      <div class="why-card">
+        <span class="ic"><i class="fa-solid fa-crosshairs"></i></span>
+        <div><h3>Retention &amp; CTR-Focused</h3><p>Every cut is made with watch-time and click-through in mind.</p></div>
+      </div>
+      <div class="why-card">
+        <span class="ic"><i class="fa-solid fa-language"></i></span>
+        <div><h3>Multilingual Edits</h3><p>Sinhala and English captioning with context that actually lands.</p></div>
+      </div>
+      <div class="why-card">
+        <span class="ic"><i class="fa-solid fa-film"></i></span>
+        <div><h3>Full-HD &amp; 4K Precision</h3><p>Exports tuned for crisp playback on every platform, at any resolution.</p></div>
+      </div>
+      <div class="why-card">
+        <span class="ic"><i class="fa-solid fa-rotate"></i></span>
+        <div><h3>Unlimited Revisions</h3><p>A client-centric workflow — we refine until it's right.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="container about-wrap">
+    <div class="about-visual">
+      <div class="av-glow"></div>
+      <div class="av-pulse"></div>
+      <div class="av-pulse av-pulse-delay"></div>
+      <div class="av-border"></div>
+      <div class="av-frame">
+        <img src="assets/img/profile.jpg" alt="Udayanga Vishvajith Perera" class="av-photo">
+        <span class="av-vignette"></span>
+        <span class="av-scan"></span>
+      </div>
+      <span class="rec-tag">REC 00:00:25:25</span>
+      <span class="corner tl"></span>
+      <span class="corner br"></span>
+    </div>
+    <div class="about-copy">
+      <div class="eyebrow">00:05:00:00 — About</div>
+      <h2>The person behind the timeline.</h2>
+      <p>I'm Udayanga Vishvajith Perera — a 25-year-old video editor and mobile videographer based in Kalutara, Sri Lanka. What started as trimming clips on a phone turned into a full craft: pacing, color, sound, and captions, all working together to keep a viewer watching. I care about the story first — the software is just how I tell it.</p>
+      <div class="info-grid">
+        <div><span class="k">Age</span><span class="v">25</span></div>
+        <div><span class="k">Location</span><span class="v">Kalutara, LK</span></div>
+        <div><span class="k">Languages</span><span class="v">Sinhala, English</span></div>
+        <div><span class="k">Primary Tools</span><span class="v">DaVinci Resolve, CapCut</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact">
+  <div class="container contact-wrap">
+    <div class="contact-info">
+      <div class="eyebrow">00:06:00:00 — Get In Touch</div>
+      <h2>Let's cut something <span class="accent">worth watching</span>.</h2>
+      <p>Tell me about your project — platform, timeline, and goals — and I'll get back to you within 24 hours.</p>
+      <div class="contact-links">
+        <a href="https://wa.me/94725707559" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp — +94 72 570 7559</a>
+        <a href="mailto:udayangamusic056@gmail.com"><i class="fa-solid fa-envelope"></i> udayangamusic056@gmail.com</a>
+      </div>
+      <div class="social-row">
+        <a href="https://www.instagram.com/_udaya_du?igsh=MXZid2YyMm02eWlsZQ%3D%3D&utm_source=qr" aria-label="Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.facebook.com/share/1FFVfnBgrb/?mibextid=wwXIfr" aria-label="Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i></a>
+      </div>
+    </div>
+
+    <div class="direct-contact-card">
+      <div class="dcc-status"><span class="dot-live"></span> Currently Available for Projects</div>
+      <h3>Prefer a quick message?</h3>
+      <p>Skip the form — reach out directly on WhatsApp or email and I'll get back to you within 24 hours.</p>
+      <div class="dcc-actions">
+        <a href="https://wa.me/94725707559" target="_blank" rel="noopener" class="btn"><i class="fa-brands fa-whatsapp"></i> Message on WhatsApp</a>
+        <a href="mailto:udayangamusic056@gmail.com" class="btn btn-ghost"><i class="fa-solid fa-envelope"></i> Send an Email</a>
+      </div>
+      <div class="dcc-meta">
+        <div><span class="k">Response Time</span><span class="v">Within 24 hrs</span></div>
+        <div><span class="k">Availability</span><span class="v">Open for new projects</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-wrap">
+      <a href="#home" class="logo"><span class="dot"></span> UDAYA EDITZ</a>
+      <ul class="footer-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-copy">© <?php echo date('Y'); ?> Udaya Editz — Udayanga Vishvajith Perera. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- ============ SHOWREEL MODAL ============ -->
+<div class="modal" id="showreelModal" aria-hidden="true">
+  <button class="modal-close" data-close>&times;</button>
+  <div class="modal-box">
+    <div class="modal-video">
+      <video id="showreelVideo" controls playsinline poster="" style="width:100%;height:100%;background:#000;">
+        <source src="" type="video/mp4">
+      </video>
+    </div>
+    <div class="modal-info">
+      <div><h3>Udaya Editz — Showreel</h3><span class="tc">00:00:00:00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PROJECT MODAL ============ -->
+<div class="modal" id="projectModal" aria-hidden="true">
+  <button class="modal-close" data-close>&times;</button>
+  <div class="modal-box" id="projectModalBox">
+    <div class="modal-video" id="projectModalVideo"></div>
+    <div class="modal-info">
+      <div><h3 id="projectModalTitle"></h3><span class="tc" id="projectModalTc"></span></div>
+      <span class="sw" id="projectModalSw"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Project data for JS-side filtering (rendered server-side from data/projects.php) -->
+<script>
+  window.__PROJECTS__ = <?php echo json_encode($projects, JSON_UNESCAPED_SLASHES); ?>;
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
